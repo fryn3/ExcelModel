@@ -109,7 +109,7 @@ public:
      * \brief Возвращает количество подтаблиц
      * \return количество подтаблиц.
      */
-    int subTableCnt() const { return _subTableCnt; }
+    int subTableCnt() const;
 
     /*!
      * \brief Возвращает абсолютный индекс строки
@@ -132,6 +132,15 @@ signals:
     void subTableSizeMaxChanged();
     void subTableCntChanged();
 
+protected slots:
+    /*!
+     * \brief Ф-ция проверки изменения количества подтаблиц
+     *
+     * Необходимо вызвать после реализации rowCount/columnCount, например в
+     * конструкторе дочернего класса.
+     */
+    void checkSubTableCntChanged();
+
 protected:
     bool isIndexValid(int subtable, int row, int column) const;
     bool isGoodSubTable(int subtable) const;
@@ -147,8 +156,7 @@ protected:
     mutable QHash<int, QByteArray> _rolesId;
     int _subTableOrientation = Qt::Vertical;
     int _subTableSizeMax = 500000;
-    int _subTableCnt = 1;
-
+    int __subTableCntPrev = 0;  ///< следит за испусканием subTableCntChanged()
 public:
     QHash<int, QByteArray> roleNames() const override;
 };

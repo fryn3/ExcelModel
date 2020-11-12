@@ -26,7 +26,14 @@ const std::array<QString, ExcelModel::ExcelRoleCNT> ExcelModel::EXCEL_ROLE_STR {
     "deploy",
 };
 
-ExcelModel::ExcelModel(QObject *parent) : QAbstractTableModel(parent) { }
+ExcelModel::ExcelModel(QObject *parent) : QAbstractTableModel(parent) {
+    /// \todo не делать привязку к this, для нормальной работы disconnect.
+    connect(this, &QAbstractItemModel::columnsInserted, this, &ExcelModel::checkSubTableCntChanged);
+    connect(this, &QAbstractItemModel::columnsRemoved, this, &ExcelModel::checkSubTableCntChanged);
+    connect(this, &QAbstractItemModel::modelReset, this, &ExcelModel::checkSubTableCntChanged);
+    connect(this, &QAbstractItemModel::rowsInserted, this, &ExcelModel::checkSubTableCntChanged);
+    connect(this, &QAbstractItemModel::rowsRemoved, this, &ExcelModel::checkSubTableCntChanged);
+}
 
 QVariant ExcelModel::excelData(int subtable, int row, int column, int role) const
 {
@@ -47,18 +54,44 @@ bool ExcelModel::excelSetData(int subtable, int row, int column, const QVariant 
 }
 
 bool ExcelModel::setSubTableOrientation(int orientation) {
-    if (orientation != Qt::Horizontal
-            && orientation != Qt::Vertical) {
+    if (_subTableOrientation == orientation) { return true; }
+    switch (orientation) {
+    case Qt::Horizontal:
+    case Qt::Vertical:
+        _subTableOrientation = orientation;
+        checkSubTableCntChanged();
+        return true;
+    default:
         return false;
     }
-    _subTableOrientation = orientation;
     return true;
 }
 
 bool ExcelModel::setSubTableSizeMax(int sizeMax) {
     if (sizeMax < 1) { return false; }
+    if (_subTableSizeMax == sizeMax) { return true; }
     _subTableSizeMax = sizeMax;
+    checkSubTableCntChanged();
     return true;
+}
+
+void ExcelModel::checkSubTableCntChanged() {
+    int nowCnt = subTableCnt();
+    if (nowCnt != __subTableCntPrev) {
+        __subTableCntPrev = nowCnt;
+        emit checkSubTableCntChanged();
+    }
+}
+
+int ExcelModel::subTableCnt() const {
+    switch (subTableOrientation()) {
+    case Qt::Horizontal:
+        return columnCount() / subTableSizeMax() + (columnCount() % subTableSizeMax() ? 1 : 0);
+    case Qt::Vertical:
+        return rowCount() / subTableSizeMax() + (rowCount() % subTableSizeMax() ? 1 : 0);
+    default:
+        return -1;
+    }
 }
 
 bool ExcelModel::isIndexValid(int subtable, int row, int column) const
@@ -70,7 +103,7 @@ bool ExcelModel::isIndexValid(int subtable, int row, int column) const
 
 bool ExcelModel::isGoodSubTable(int subtable) const
 {
-    return subtable > 0 && subtable < _subTableCnt;
+    return subtable > 0 && subtable < subTableCnt();
 }
 
 bool ExcelModel::isGoodRow(int row, int subtable) const
