@@ -11,16 +11,17 @@
  * класса.
  * Так же, для отображения больших таблиц, используется подтаблицы и
  * функции excelData / excelSetData.
+ * \todo Переименовать в SubtableModel.
  */
 class ExcelModel : public QAbstractTableModel
 {
     Q_OBJECT
     Q_PROPERTY(int subTableOrientation READ subTableOrientation WRITE setSubTableOrientation NOTIFY subTableOrientationChanged)
     Q_PROPERTY(int subTableSizeMax READ subTableSizeMax WRITE setSubTableSizeMax NOTIFY subTableSizeMaxChanged)
-    Q_PROPERTY(int subTableCnt READ subTableCnt NOTIFY subTableCntChanged)
+    Q_PROPERTY(int subTableCount READ subTableCount NOTIFY subTableCountChanged)
 public:
     static const int SUBTABLE_ORIENTATION_DEFAULT = Qt::Vertical;
-    static const int SUBTABLE_SIZE_MAX_DEFAULT = 5000;
+    static const int SUBTABLE_SIZE_MAX_DEFAULT = -1;
     explicit ExcelModel(QObject *parent = nullptr);
     virtual ~ExcelModel() = default;
 
@@ -48,10 +49,48 @@ public:
         ExcelRoleIndexInGroup,      // индекс в группе
         ExcelRoleDeploy,            // развернута ли группа
 
-        ExcelRoleCNT
+        ExcelRoleCOUNT
     };
     Q_ENUM(ExcelRole)
-    static const std::array<QString, ExcelRoleCNT> EXCEL_ROLE_STR;
+    static const std::array<QString, ExcelRoleCOUNT> EXCEL_ROLE_STR;
+
+    /*!
+     * \brief Возвращает количество строк для полной таблицы
+     *
+     * Заменяет стандартную функцию rowCount(). Функцию rowCount()
+     * переопределять нлеьзя!
+     * \return количество строк.
+     */
+    Q_INVOKABLE virtual int totalRowCount() const = 0;
+
+    /*!
+     * \brief Возвращает количество столбцов для полной таблицы
+     *
+     * Заменяет стандартную функцию columnCount(). Функцию columnCount()
+     * переопределять нельзя!
+     * \return количество столбцов.
+     */
+    Q_INVOKABLE virtual int totalColumnCount() const = 0;
+
+    /*!
+     * \brief Возвращает количество строк в ПОДТАБЛИЦАХ
+     *
+     * Не перегружать функцию!
+     * \see totalRowCount.
+     * \param parent - родитель, не используется.
+     * \return количество строк в подтаблицах.
+     */
+    int rowCount(const QModelIndex &parent = QModelIndex()) const override;
+
+    /*!
+     * \brief Возвращает количество столбцов в ПОДТАБЛИЦАХ
+     *
+     * Не перегружать функцию!
+     * \see totalColumnCount.
+     * \param parent - родитель, не используется.
+     * \return количество строк в подтаблицах.
+     */
+    int columnCount(const QModelIndex &parent = QModelIndex()) const override;
 
     /*!
      * \brief Функция получения данных
@@ -72,24 +111,43 @@ public:
      * \param subtable - номер подтаблицы.
      * \param row - номер строки.
      * \param column - номер колонки.
-     * \param value
+     * \param value - измененные данные.
      * \param role - роль.
      * \return true, если удачно.
      */
     Q_INVOKABLE bool excelSetData(int subtable, int row, int column, const QVariant &value, int role = Qt::EditRole);
 
     /*!
+     * \brief Получает данные заголовка
+     *
+     * Вызывает стандартную функцию headerData.
+     * \param subtable - номер подтаблицы.
+     * \param section - индекс в подтаблице.
+     * \param orientation - оринтация заголовка.
+     * \param role - роль.
+     * \return данные заголовка.
+     */
+    Q_INVOKABLE QVariant excelHeaderData(int subtable, int section, Qt::Orientation orientation, int role) const;
+
+    /*!
+     * \brief Возвращает код роли
+     * \param role - строковое представление роли.
+     * \return код роли.
+     */
+    Q_INVOKABLE int getStrRole(QByteArray role) const;
+
+    /*!
      * \brief Орентация создания подтаблиц
      * \return Qt::Orientation.
      */
-    int subTableOrientation() const { return _subTableOrientation; }
+    Q_INVOKABLE int subTableOrientation() const { return _subTableOrientation; }
 
     /*!
      * \brief Установка орентации создания подтаблиц
      * \param orientation - Qt::Orientation.
      * \return true, если удачно.
      */
-    bool setSubTableOrientation(int orientation);
+    Q_INVOKABLE bool setSubTableOrientation(int orientation);
 
     /*!
      * \brief Максимальный размер в одной подтаблице
@@ -98,20 +156,20 @@ public:
      * дополнительные подтаблицы при необходимости.
      * \return максимальное количество строк.
      */
-    int subTableSizeMax() const { return _subTableSizeMax; }
+    Q_INVOKABLE int subTableSizeMax() const;
 
     /*!
      * \brief Установка максимального размера подтаблицы
      * \param sizeMax - максимальный размер.
      * \return true, если удачно.
      */
-    bool setSubTableSizeMax(int sizeMax);
+    Q_INVOKABLE bool setSubTableSizeMax(int sizeMax);
 
     /*!
      * \brief Возвращает количество подтаблиц
      * \return количество подтаблиц.
      */
-    int subTableCnt() const;
+    Q_INVOKABLE int subTableCount() const;
 
     /*!
      * \brief Возвращает абсолютный индекс строки
@@ -119,7 +177,7 @@ public:
      * \param subtable - индекс подтаблицы.
      * \return абсолютный индекс строки.
      */
-    int absoluteRow(int row, int subtable) const;
+    Q_INVOKABLE int absoluteRow(int row, int subtable) const;
 
     /*!
      * \brief Возвращает абсолютный индекс столбца
@@ -127,12 +185,12 @@ public:
      * \param subtable - индекс подтаблицы.
      * \return абсолютный индекс столбца.
      */
-    int absoluteColumn(int column, int subtable) const;
+    Q_INVOKABLE int absoluteColumn(int column, int subtable) const;
 
 signals:
     void subTableOrientationChanged();
     void subTableSizeMaxChanged();
-    void subTableCntChanged();
+    void subTableCountChanged();
 
 protected slots:
     /*!
@@ -141,13 +199,13 @@ protected slots:
      * Необходимо вызвать после реализации rowCount/columnCount, например в
      * конструкторе дочернего класса.
      */
-    void checkSubTableCntChanged();
+    void checkSubTableCountChanged();
 
 protected:
     bool isIndexValid(int subtable, int row, int column) const;
-    bool isGoodSubTable(int subtable) const;
-    bool isGoodRow(int row, int subtable) const;
-    bool isGoodColumn(int column, int subtable) const;
+    bool isSubTableValid(int subtable) const;
+    bool isRowValid(int row, int subtable) const;
+    bool isColumnValid(int column, int subtable) const;
     /*!
      * \brief Возвращает нужную роль или -1
      * \param role - на проверку.
@@ -156,9 +214,10 @@ protected:
      */
     int isGoodRole(int role) const;
     mutable QHash<int, QByteArray> _rolesId;
+    mutable QHash<QByteArray, int> _rolesStr;
     int _subTableOrientation = SUBTABLE_ORIENTATION_DEFAULT;
-    int _subTableSizeMax = SUBTABLE_SIZE_MAX_DEFAULT;
-    int __subTableCntPrev = 0;  ///< следит за испусканием subTableCntChanged()
+    mutable int _subTableSizeMax = SUBTABLE_SIZE_MAX_DEFAULT;
+    int __subTableCountPrev = 1;  ///< по умолчанию одна таблица
 public:
     QHash<int, QByteArray> roleNames() const override;
 };
