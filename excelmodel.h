@@ -19,6 +19,8 @@ class ExcelModel : public QAbstractTableModel
     Q_PROPERTY(int subTableSizeMax READ subTableSizeMax WRITE setSubTableSizeMax NOTIFY subTableSizeMaxChanged)
     Q_PROPERTY(int subTableCnt READ subTableCnt NOTIFY subTableCntChanged)
 public:
+    static const int SUBTABLE_ORIENTATION_DEFAULT = Qt::Vertical;
+    static const int SUBTABLE_SIZE_MAX_DEFAULT = 5000;
     explicit ExcelModel(QObject *parent = nullptr);
     virtual ~ExcelModel() = default;
 
@@ -154,8 +156,8 @@ protected:
      */
     int isGoodRole(int role) const;
     mutable QHash<int, QByteArray> _rolesId;
-    int _subTableOrientation = Qt::Vertical;
-    int _subTableSizeMax = 500000;
+    int _subTableOrientation = SUBTABLE_ORIENTATION_DEFAULT;
+    int _subTableSizeMax = SUBTABLE_SIZE_MAX_DEFAULT;
     int __subTableCntPrev = 0;  ///< следит за испусканием subTableCntChanged()
 public:
     QHash<int, QByteArray> roleNames() const override;
