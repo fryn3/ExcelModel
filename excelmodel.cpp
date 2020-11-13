@@ -215,20 +215,19 @@ int ExcelModel::absoluteColumn(int column, int subtable) const {
     }
 }
 
-
 int ExcelModel::isGoodRole(int role) const {
     if (role >= Qt::UserRole) {
-        return role - Qt::UserRole;
+        return role;
     }
     switch (role) {
     case Qt::DisplayRole:
-        return ExcelRoleDisplay;
+        return ExcelRoleDisplay + Qt::UserRole;
     case Qt::TextAlignmentRole:
-        return ExcelRoleAlignment;
+        return ExcelRoleAlignment + Qt::UserRole;
     case Qt::BackgroundRole:
-        return ExcelRoleBackground;
+        return ExcelRoleBackground + Qt::UserRole;
     case Qt::ToolTipPropertyRole:
-        return ExcelRoleToolTip;
+        return ExcelRoleToolTip + Qt::UserRole;
     default:
         return -1;
     }

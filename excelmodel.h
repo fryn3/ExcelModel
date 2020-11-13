@@ -206,11 +206,11 @@ protected:
     bool isSubTableValid(int subtable) const;
     bool isRowValid(int row, int subtable) const;
     bool isColumnValid(int column, int subtable) const;
+
     /*!
      * \brief Возвращает нужную роль или -1
      * \param role - на проверку.
-     * \return -1, если системная неиспользуемая роль, иначе число
-     * роль которого больше или равно Qt::UserRole.
+     * \return -1, если системная неиспользуемая роль, иначе role.
      */
     int isGoodRole(int role) const;
     mutable QHash<int, QByteArray> _rolesId;
