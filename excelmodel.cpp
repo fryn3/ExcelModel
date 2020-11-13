@@ -163,16 +163,16 @@ bool ExcelModel::isIndexValid(int subtable, int row, int column) const {
 }
 
 bool ExcelModel::isSubTableValid(int subtable) const {
-    return subtable > 0 && subtable < subTableCount();
+    return subtable >= 0 && subtable < subTableCount();
 }
 
 bool ExcelModel::isRowValid(int row, int subtable) const {
     switch (subTableOrientation()) {
     case Qt::Horizontal:
-        return row > 0 && row < rowCount();
+        return row >= 0 && row < rowCount();
     case Qt::Vertical:
         if (!isSubTableValid(subtable)) { return false; }
-        return row > 0 && subtable * subTableSizeMax() + row < rowCount();
+        return row >= 0 && subtable * subTableSizeMax() + row < rowCount();
     default:
         return false;
     }
@@ -182,10 +182,10 @@ bool ExcelModel::isColumnValid(int column, int subtable) const {
     switch (subTableOrientation()) {
     case Qt::Horizontal:
         if (!isSubTableValid(subtable)) { return false; }
-        return column > 0
+        return column >= 0
                 && subtable * subTableSizeMax() + column < columnCount();
     case Qt::Vertical:
-        return column > 0 && column < columnCount();
+        return column >= 0 && column < columnCount();
     default:
         return false;
     }
