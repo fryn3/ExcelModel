@@ -80,7 +80,7 @@ public:
      * \param parent - родитель, не используется.
      * \return количество строк в подтаблицах.
      */
-    int rowCount(const QModelIndex &parent = QModelIndex()) const override;
+    Q_INVOKABLE int rowCount(const QModelIndex &parent = QModelIndex()) const override;
 
     /*!
      * \brief Возвращает количество столбцов в ПОДТАБЛИЦАХ
@@ -90,7 +90,7 @@ public:
      * \param parent - родитель, не используется.
      * \return количество строк в подтаблицах.
      */
-    int columnCount(const QModelIndex &parent = QModelIndex()) const override;
+    Q_INVOKABLE int columnCount(const QModelIndex &parent = QModelIndex()) const override;
 
     /*!
      * \brief Функция получения данных
