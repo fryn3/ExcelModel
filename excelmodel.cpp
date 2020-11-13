@@ -148,9 +148,9 @@ void ExcelModel::checkSubTableCountChanged() {
 int ExcelModel::subTableCount() const {
     switch (subTableOrientation()) {
     case Qt::Horizontal:
-        return columnCount() / subTableSizeMax() + (columnCount() % subTableSizeMax() ? 1 : 0);
+        return totalColumnCount() / subTableSizeMax() + (totalColumnCount() % subTableSizeMax() ? 1 : 0);
     case Qt::Vertical:
-        return rowCount() / subTableSizeMax() + (rowCount() % subTableSizeMax() ? 1 : 0);
+        return totalRowCount() / subTableSizeMax() + (totalRowCount() % subTableSizeMax() ? 1 : 0);
     default:
         return -1;
     }
