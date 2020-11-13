@@ -35,8 +35,7 @@ ExcelModel::ExcelModel(QObject *parent) : QAbstractTableModel(parent) {
     connect(this, &QAbstractItemModel::rowsRemoved, this, &ExcelModel::checkSubTableCountChanged);
 }
 
-int ExcelModel::rowCount(const QModelIndex &parent) const
-{
+int ExcelModel::rowCount(const QModelIndex &parent) const {
     Q_UNUSED(parent);
     switch (subTableOrientation()) {
     case Qt::Horizontal:
@@ -48,8 +47,7 @@ int ExcelModel::rowCount(const QModelIndex &parent) const
     }
 }
 
-int ExcelModel::columnCount(const QModelIndex &parent) const
-{
+int ExcelModel::columnCount(const QModelIndex &parent) const {
     Q_UNUSED(parent);
     switch (subTableOrientation()) {
     case Qt::Horizontal:
@@ -66,7 +64,7 @@ QVariant ExcelModel::excelData(int subtable, int row, int column, int role) cons
     if (!isIndexValid(subtable, row, column)) {
         return QVariant();
     }
-    return data(index(absoluteRow(row, subtable), absoluteColumn(column, subtable)), role);
+    return data(createIndex(absoluteRow(row, subtable), absoluteColumn(column, subtable)), role);
 }
 
 bool ExcelModel::excelSetData(int subtable, int row, int column, const QVariant &value, int role) {
@@ -74,7 +72,7 @@ bool ExcelModel::excelSetData(int subtable, int row, int column, const QVariant 
     if (!isIndexValid(subtable, row, column)) {
         return false;
     }
-    return setData(index(absoluteRow(row, subtable), absoluteColumn(column, subtable)), value, role);
+    return setData(createIndex(absoluteRow(row, subtable), absoluteColumn(column, subtable)), value, role);
 }
 
 QVariant ExcelModel::excelHeaderData(int subtable, int section, Qt::Orientation orientation, int role) const {
