@@ -219,6 +219,7 @@ int ExcelModel::isGoodRole(int role) const {
     }
     switch (role) {
     case Qt::DisplayRole:
+    case Qt::EditRole:
         return ExcelRoleDisplay + Qt::UserRole;
     case Qt::TextAlignmentRole:
         return ExcelRoleAlignment + Qt::UserRole;
