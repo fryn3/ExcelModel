@@ -5,54 +5,54 @@
 /*!
  * \brief Табличная модель
  *
+ * Модель для очень больших таблиц. Модель использует подтаблицы, для
+ * корректного отображения при больших данных.
  * Модель с возможностью объединения столбцов и с объединением ячеек.
- * Для подключения в QML необходимо написать import ExcelModel 12.34.
+ * Для подключения в QML необходимо написать import SubtableModel 12.34.
  * Для использования модели в cpp коде, необходимо унаследоваться от этого
- * класса.
- * Так же, для отображения больших таблиц, используется подтаблицы и
- * функции excelData / excelSetData.
+ * класса и переопределить функции totalRowCount и totalColumnCount.
  * \todo Переименовать в SubtableModel.
  */
-class ExcelModel : public QAbstractTableModel
+class SubtableModel : public QAbstractTableModel
 {
     Q_OBJECT
-    Q_PROPERTY(int subTableOrientation READ subTableOrientation WRITE setSubTableOrientation NOTIFY subTableOrientationChanged)
-    Q_PROPERTY(int subTableSizeMax READ subTableSizeMax WRITE setSubTableSizeMax NOTIFY subTableSizeMaxChanged)
-    Q_PROPERTY(int subTableCount READ subTableCount NOTIFY subTableCountChanged)
+    Q_PROPERTY(int subtableOrientation READ subtableOrientation WRITE setSubtableOrientation NOTIFY subtableOrientationChanged)
+    Q_PROPERTY(int subtableSizeMax READ subtableSizeMax WRITE setSubtableSizeMax NOTIFY subtableSizeMaxChanged)
+    Q_PROPERTY(int subtableCount READ subtableCount NOTIFY subtableCountChanged)
 public:
     static const int SUBTABLE_ORIENTATION_DEFAULT = Qt::Vertical;
     static const int SUBTABLE_SIZE_MAX_DEFAULT = -1;
-    explicit ExcelModel(QObject *parent = nullptr);
-    virtual ~ExcelModel() = default;
+    explicit SubtableModel(QObject *parent = nullptr);
+    virtual ~SubtableModel() = default;
 
-    enum ExcelRole {
+    enum SubtableRole {
         // alias std roles
-        ExcelRoleDisplay,           // текст (DisplayRole)
-        ExcelRoleAlignment,         // выравнивание текста (TextAlignmentRole)
-        ExcelRoleBackground,        // цвет фона (BackgroundRole)
-        ExcelRoleToolTip,           // всплывающая подсказка (ToolTipPropertyRole)
+        SubtableRoleDisplay,           // текст (DisplayRole)
+        SubtableRoleAlignment,         // выравнивание текста (TextAlignmentRole)
+        SubtableRoleBackground,        // цвет фона (BackgroundRole)
+        SubtableRoleToolTip,           // всплывающая подсказка (ToolTipPropertyRole)
         // just for Cell
-        ExcelRoleReadOnly,          // только на чтение
-        ExcelRoleEnabled,           // активность ячейки
-        ExcelRoleSpanH,             // объединение по горизонтали
-        ExcelRoleSpanV,             // объединение по вертикали
-        ExcelRoleValidator,         // валидатор изменений
-        ExcelRoleDropdown,          // выпадающие подсказки при редактировании
+        SubtableRoleReadOnly,          // только на чтение
+        SubtableRoleEnabled,           // активность ячейки
+        SubtableRoleSpanH,             // объединение по горизонтали
+        SubtableRoleSpanV,             // объединение по вертикали
+        SubtableRoleValidator,         // валидатор изменений
+        SubtableRoleDropdown,          // выпадающие подсказки при редактировании
         // выбранные ячейки возможно не нужно делать ролями.
 //        ExcelRoleSelected,          // выбранная ячейка (может быть только одна в модели)
 //        ExcelRoleInSelectedArea,    // выбранная область
         // just for Header
-        ExcelRoleWidth,             // ширина
-        ExcelRoleHeight,            // высота
-        ExcelRoleResized,           // возможность менять размеры
-        ExcelRoleGroup,             // номер группы
-        ExcelRoleIndexInGroup,      // индекс в группе
-        ExcelRoleDeploy,            // развернута ли группа
+        SubtableRoleWidth,             // ширина
+        SubtableRoleHeight,            // высота
+        SubtableRoleResized,           // возможность менять размеры
+        SubtableRoleGroup,             // номер группы
+        SubtableRoleIndexInGroup,      // индекс в группе
+        SubtableRoleDeploy,            // развернута ли группа
 
-        ExcelRoleCOUNT
+        SubtableRoleCOUNT
     };
-    Q_ENUM(ExcelRole)
-    static const std::array<QString, ExcelRoleCOUNT> EXCEL_ROLE_STR;
+    Q_ENUM(SubtableRole)
+    static const std::array<QString, SubtableRoleCOUNT> SUBTABLE_ROLE_STR;
 
     /*!
      * \brief Возвращает количество строк для полной таблицы
@@ -102,7 +102,7 @@ public:
      * \param role - роль.
      * \return данные ячейки.
      */
-    Q_INVOKABLE QVariant excelData(int subtable, int row, int column, int role = Qt::DisplayRole) const;
+    Q_INVOKABLE QVariant subtableData(int subtable, int row, int column, int role = Qt::DisplayRole) const;
 
     /*!
      * \brief Функция изменения данных
@@ -115,7 +115,7 @@ public:
      * \param role - роль.
      * \return true, если удачно.
      */
-    Q_INVOKABLE bool excelSetData(int subtable, int row, int column, const QVariant &value, int role = Qt::EditRole);
+    Q_INVOKABLE bool subtableSetData(int subtable, int row, int column, const QVariant &value, int role = Qt::EditRole);
 
     /*!
      * \brief Получает данные заголовка
@@ -127,7 +127,7 @@ public:
      * \param role - роль.
      * \return данные заголовка.
      */
-    Q_INVOKABLE QVariant excelHeaderData(int subtable, int section, Qt::Orientation orientation, int role) const;
+    Q_INVOKABLE QVariant subtableHeaderData(int subtable, int section, Qt::Orientation orientation, int role) const;
 
     /*!
      * \brief Возвращает код роли
@@ -140,36 +140,36 @@ public:
      * \brief Орентация создания подтаблиц
      * \return Qt::Orientation.
      */
-    Q_INVOKABLE int subTableOrientation() const { return _subTableOrientation; }
+    Q_INVOKABLE int subtableOrientation() const { return _subTableOrientation; }
 
     /*!
      * \brief Установка орентации создания подтаблиц
      * \param orientation - Qt::Orientation.
      * \return true, если удачно.
      */
-    Q_INVOKABLE bool setSubTableOrientation(int orientation);
+    Q_INVOKABLE bool setSubtableOrientation(int orientation);
 
     /*!
      * \brief Максимальный размер в одной подтаблице
      *
-     * Размер по направлению subTableOrientation() будут создавать
+     * Размер по направлению subtableOrientation() будут создавать
      * дополнительные подтаблицы при необходимости.
      * \return максимальное количество строк.
      */
-    Q_INVOKABLE int subTableSizeMax() const;
+    Q_INVOKABLE int subtableSizeMax() const;
 
     /*!
      * \brief Установка максимального размера подтаблицы
      * \param sizeMax - максимальный размер.
      * \return true, если удачно.
      */
-    Q_INVOKABLE bool setSubTableSizeMax(int sizeMax);
+    Q_INVOKABLE bool setSubtableSizeMax(int sizeMax);
 
     /*!
      * \brief Возвращает количество подтаблиц
      * \return количество подтаблиц.
      */
-    Q_INVOKABLE int subTableCount() const;
+    Q_INVOKABLE int subtableCount() const;
 
     /*!
      * \brief Возвращает абсолютный индекс строки
@@ -188,9 +188,9 @@ public:
     Q_INVOKABLE int absoluteColumn(int column, int subtable) const;
 
 signals:
-    void subTableOrientationChanged();
-    void subTableSizeMaxChanged();
-    void subTableCountChanged();
+    void subtableOrientationChanged();
+    void subtableSizeMaxChanged();
+    void subtableCountChanged();
 
 protected slots:
     /*!
@@ -199,11 +199,11 @@ protected slots:
      * Необходимо вызвать после реализации rowCount/columnCount, например в
      * конструкторе дочернего класса.
      */
-    void checkSubTableCountChanged();
+    void checkSubtableCountChanged();
 
 protected:
     bool isIndexValid(int subtable, int row, int column) const;
-    bool isSubTableValid(int subtable) const;
+    bool isSubtableValid(int subtable) const;
     bool isRowValid(int row, int subtable) const;
     bool isColumnValid(int column, int subtable) const;
 

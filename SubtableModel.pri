@@ -7,7 +7,7 @@ INCLUDEPATH += $$PWD
 #QML_IMPORT_MAJOR_VERSION += 12
 
 SOURCES += \
-    $$PWD/excelmodel.cpp
+    $$PWD/subtablemodel.cpp
 
 HEADERS += \
-    $$PWD/excelmodel.h
+    $$PWD/subtablemodel.h
