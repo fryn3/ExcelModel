@@ -3,15 +3,15 @@
 #include <QAbstractTableModel>
 
 /*!
+ * \class SubtableModel
  * \brief Табличная модель
  *
  * Модель для очень больших таблиц. Модель использует подтаблицы, для
  * корректного отображения при больших данных.
  * Модель с возможностью объединения столбцов и с объединением ячеек.
- * Для подключения в QML необходимо написать import SubtableModel 12.34.
+ * Для подключения в QML необходимо написать import cpp.SubtableModel 12.34.
  * Для использования модели в cpp коде, необходимо унаследоваться от этого
  * класса и переопределить функции totalRowCount и totalColumnCount.
- * \todo Переименовать в SubtableModel.
  */
 class SubtableModel : public QAbstractTableModel
 {
@@ -20,6 +20,8 @@ class SubtableModel : public QAbstractTableModel
     Q_PROPERTY(int subtableSizeMax READ subtableSizeMax WRITE setSubtableSizeMax NOTIFY subtableSizeMaxChanged)
     Q_PROPERTY(int subtableCount READ subtableCount NOTIFY subtableCountChanged)
 public:
+    static const QString ITEM_NAME;     // SubtableModel
+    static const bool IS_QML_REG;
     static const int SUBTABLE_ORIENTATION_DEFAULT = Qt::Vertical;
     static const int SUBTABLE_SIZE_MAX_DEFAULT = -1;
     explicit SubtableModel(QObject *parent = nullptr);

@@ -1,6 +1,19 @@
 #include "subtablemodel.h"
 
 #include <QDebug>
+#include <QQmlEngine>
+
+static bool registerMe() {
+    qmlRegisterUncreatableType<SubtableModel>(
+                QString("cpp.%1").arg(SubtableModel::ITEM_NAME).toUtf8(),
+                12, 34, SubtableModel::ITEM_NAME.toUtf8(),
+                "Not creatable as it is an enum type");
+    return true;
+}
+
+const QString SubtableModel::ITEM_NAME = "SubtableModel";
+const bool SubtableModel::IS_QML_REG = registerMe();
+
 
 const std::array<QString, SubtableModel::SubtableRoleCOUNT> SubtableModel::SUBTABLE_ROLE_STR {
     // alias std roles
