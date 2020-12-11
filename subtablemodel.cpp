@@ -15,15 +15,14 @@ const std::array<QString, SubtableModel::SubtableRoleCOUNT> SubtableModel::SUBTA
     "spanV",
     "validator",
     "dropdown",
-//    "selected",
-//    "inSelectedArea",
     // header
     "width",
     "height",
     "resized",
     "group",
-    "indexInGroup",
     "deploy",
+    "groupSize",
+    "indexInGroup",
 };
 
 SubtableModel::SubtableModel(QObject *parent) : QAbstractTableModel(parent) {
@@ -60,7 +59,6 @@ int SubtableModel::columnCount(const QModelIndex &parent) const {
 }
 
 QVariant SubtableModel::subtableData(int subtable, int row, int column, int role) const {
-    qDebug() << __PRETTY_FUNCTION__ << subtable << row << column << role;
     if (!isIndexValid(subtable, row, column)) {
         return QVariant();
     }
@@ -76,7 +74,6 @@ bool SubtableModel::subtableSetData(int subtable, int row, int column, const QVa
 }
 
 QVariant SubtableModel::subtableHeaderData(int subtable, int section, Qt::Orientation orientation, int role) const {
-    qDebug() << __PRETTY_FUNCTION__ << subtable << section << orientation << role;
     switch (orientation) {
     case Qt::Horizontal:
         return headerData(absoluteColumn(section, subtable), orientation, role);

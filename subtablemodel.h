@@ -38,16 +38,14 @@ public:
         SubtableRoleSpanV,             // объединение по вертикали
         SubtableRoleValidator,         // валидатор изменений
         SubtableRoleDropdown,          // выпадающие подсказки при редактировании
-        // выбранные ячейки возможно не нужно делать ролями.
-//        ExcelRoleSelected,          // выбранная ячейка (может быть только одна в модели)
-//        ExcelRoleInSelectedArea,    // выбранная область
         // just for Header
         SubtableRoleWidth,             // ширина
         SubtableRoleHeight,            // высота
         SubtableRoleResized,           // возможность менять размеры
-        SubtableRoleGroup,             // номер группы
-        SubtableRoleIndexInGroup,      // индекс в группе
+        SubtableRoleGroup,             // являится ли сворачиваемым?
         SubtableRoleDeploy,            // развернута ли группа
+        SubtableRoleGroupSize,         // размер группы
+        SubtableRoleIndexInGroup,      // индекс в группе
 
         SubtableRoleCOUNT
     };
