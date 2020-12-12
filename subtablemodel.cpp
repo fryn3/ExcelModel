@@ -15,7 +15,9 @@ const QString SubtableModel::ITEM_NAME = "SubtableModel";
 const bool SubtableModel::IS_QML_REG = registerMe();
 
 
-const std::array<QString, SubtableModel::SubtableRoleCOUNT> SubtableModel::SUBTABLE_ROLE_STR {
+const std::array
+    <QString, SubtableModel::SubtableRoleEND - SubtableModel::SubtableRoleBEGIN>
+        SubtableModel::SUBTABLE_ROLE_STR {
     // alias std roles
     "display",
     "alignment",    // не уверен что стандартное название такое
@@ -230,13 +232,13 @@ int SubtableModel::isGoodRole(int role) const {
     switch (role) {
     case Qt::DisplayRole:
     case Qt::EditRole:
-        return SubtableRoleDisplay + Qt::UserRole;
+        return SubtableRoleDisplay;
     case Qt::TextAlignmentRole:
-        return SubtableRoleAlignment + Qt::UserRole;
+        return SubtableRoleAlignment;
     case Qt::BackgroundRole:
-        return SubtableRoleBackground + Qt::UserRole;
+        return SubtableRoleBackground;
     case Qt::ToolTipPropertyRole:
-        return SubtableRoleToolTip + Qt::UserRole;
+        return SubtableRoleToolTip;
     default:
         return -1;
     }
@@ -245,8 +247,8 @@ int SubtableModel::isGoodRole(int role) const {
 QHash<int, QByteArray> SubtableModel::roleNames() const {
     if (!_rolesId.isEmpty()) { return _rolesId; }
 
-    for (int i = 0; i < SubtableRoleCOUNT; ++i) {
-        _rolesId.insert(Qt::UserRole + i, SUBTABLE_ROLE_STR[i].toUtf8());
+    for (int i = SubtableRoleBEGIN; i < SubtableRoleEND; ++i) {
+        _rolesId.insert(i, SUBTABLE_ROLE_STR[i - SubtableRoleBEGIN].toUtf8());
     }
     return _rolesId;
 }

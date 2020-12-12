@@ -29,7 +29,8 @@ public:
 
     enum SubtableRole {
         // alias std roles
-        SubtableRoleDisplay,           // текст (DisplayRole)
+        SubtableRoleBEGIN = Qt::UserRole,
+        SubtableRoleDisplay = SubtableRoleBEGIN, // текст (DisplayRole)
         SubtableRoleAlignment,         // выравнивание текста (TextAlignmentRole)
         SubtableRoleBackground,        // цвет фона (BackgroundRole)
         SubtableRoleToolTip,           // всплывающая подсказка (ToolTipPropertyRole)
@@ -49,10 +50,10 @@ public:
         SubtableRoleGroupSize,         // размер группы
         SubtableRoleIndexInGroup,      // индекс в группе
 
-        SubtableRoleCOUNT
+        SubtableRoleEND
     };
     Q_ENUM(SubtableRole)
-    static const std::array<QString, SubtableRoleCOUNT> SUBTABLE_ROLE_STR;
+    static const std::array<QString, SubtableRoleEND - SubtableRoleBEGIN> SUBTABLE_ROLE_STR;
 
     /*!
      * \brief Возвращает количество строк для полной таблицы
