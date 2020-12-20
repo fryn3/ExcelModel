@@ -28,27 +28,28 @@ public:
     virtual ~SubtableModel() = default;
 
     enum SubtableRole {
-        // alias std roles
         SubtableRoleBEGIN = Qt::UserRole,
+        // alias std roles
         SubtableRoleDisplay = SubtableRoleBEGIN, // текст (DisplayRole)
-        SubtableRoleAlignment,         // выравнивание текста (TextAlignmentRole)
-        SubtableRoleBackground,        // цвет фона (BackgroundRole)
-        SubtableRoleToolTip,           // всплывающая подсказка (ToolTipPropertyRole)
+        SubtableRoleAlignment,          // выравнивание текста (TextAlignmentRole)
+        SubtableRoleBackground,         // цвет фона (BackgroundRole)
+        SubtableRoleToolTip,            // всплывающая подсказка (ToolTipPropertyRole)
         // just for Cell
-        SubtableRoleReadOnly,          // только на чтение
-        SubtableRoleEnabled,           // активность ячейки
-        SubtableRoleSpanH,             // объединение по горизонтали
-        SubtableRoleSpanV,             // объединение по вертикали
-        SubtableRoleValidator,         // валидатор изменений
-        SubtableRoleDropdown,          // выпадающие подсказки при редактировании
+        SubtableRoleReadOnly,           // только на чтение
+        SubtableRoleEnabled,            // активность ячейки
+        SubtableRoleSpanH,              // объединение по горизонтали
+        SubtableRoleSpanV,              // объединение по вертикали
+        SubtableRoleValidator,          // валидатор изменений
+        SubtableRoleDropdown,           // выпадающие подсказки при редактировании
         // just for Header
-        SubtableRoleWidth,             // ширина
-        SubtableRoleHeight,            // высота
-        SubtableRoleResized,           // возможность менять размеры
-        SubtableRoleGroup,             // являится ли сворачиваемым?
-        SubtableRoleDeploy,            // развернута ли группа
-        SubtableRoleGroupSize,         // размер группы
-        SubtableRoleIndexInGroup,      // индекс в группе
+        SubtableRoleWidth,              // ширина
+        SubtableRoleHeight,             // высота
+        SubtableRoleResized,            // возможность менять размеры
+        SubtableRolePin,                // закреплена ли строка/столбец
+        SubtableRoleGroup,              // являится ли сворачиваемым?
+        SubtableRoleDeploy,             // развернута ли группа
+        SubtableRoleGroupSize,          // размер группы
+        SubtableRoleIndexInGroup,       // индекс в группе
 
         SubtableRoleEND
     };
