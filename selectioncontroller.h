@@ -9,6 +9,12 @@ class SelectionController : public QObject
 {
     Q_OBJECT
     Q_PROPERTY(int startRow READ startRow WRITE setStartRow NOTIFY startRowChanged)
+    Q_PROPERTY(int startColumn READ startColumn WRITE setStartColumn NOTIFY startColumnChanged)
+    Q_PROPERTY(int endRow READ endRow WRITE setEndRow NOTIFY endRowChanged)
+    Q_PROPERTY(int endColumn READ endColumn WRITE setEndColumn NOTIFY endColumnChanged)
+    Q_PROPERTY(int activeRow READ activeRow WRITE setActiveRow NOTIFY activeRowChanged)
+    Q_PROPERTY(int activeColumn READ activeColumn WRITE setActiveColumn NOTIFY activeColumnChanged)
+    Q_PROPERTY(bool mouseSelection READ mouseSelection WRITE setMouseSelection NOTIFY mouseSelectionChanged)
     Q_PROPERTY(QPoint currentItem READ currentItem WRITE setCurrentItem NOTIFY currentItemChanged)
     Q_PROPERTY(QRect selectedArea READ selectedArea WRITE setSelectedArea NOTIFY selectedAreaChanged)
     Q_PROPERTY(SubtableModel* model READ model WRITE setModel NOTIFY modelChanged)
