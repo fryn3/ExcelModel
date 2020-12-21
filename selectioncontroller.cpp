@@ -117,7 +117,7 @@ void SelectionController::setCurrentItem(const QPoint &currentItem) {
     disconnectCurrentItem();
     setActiveRow(currentItem.x());
     setActiveColumn(currentItem.y());
-    normalizeBounds();
+//    normalizeBounds();
     emit currentItemChanged();
     connectCurrentItem();
 }
@@ -135,7 +135,7 @@ void SelectionController::setSelectedArea(const QRect &selectedArea) {
     const auto &bottomRight = selectedArea.bottomRight();
     setEndRow(bottomRight.x());
     setEndColumn(bottomRight.y());
-    normalizeBounds();
+//    normalizeBounds();
     emit selectedAreaChanged();
     connectSelectedArea();
 }
@@ -166,29 +166,29 @@ void SelectionController::normalizeBounds() {
 }
 
 void SelectionController::connectCurrentItem() {
-    for (const auto &sig: _signalsActive) {
-        connect(this, sig, this, &SelectionController::normalizeBounds);
-        connect(this, sig, this, &SelectionController::currentItemChanged);
-    }
+//    for (const auto &sig: _signalsActive) {
+//        connect(this, sig, this, &SelectionController::normalizeBounds);
+//        connect(this, sig, this, &SelectionController::currentItemChanged);
+//    }
 }
 
 void SelectionController::disconnectCurrentItem() {
-    for (const auto &sig: _signalsActive) {
-        disconnect(this, sig, this, &SelectionController::normalizeBounds);
-        disconnect(this, sig, this, &SelectionController::currentItemChanged);
-    }
+//    for (const auto &sig: _signalsActive) {
+//        disconnect(this, sig, this, &SelectionController::normalizeBounds);
+//        disconnect(this, sig, this, &SelectionController::currentItemChanged);
+//    }
 }
 
 void SelectionController::connectSelectedArea() {
-    for (const auto &sig: _signalsSelection) {
-        connect(this, sig, this, &SelectionController::normalizeBounds);
-        connect(this, sig, this, &SelectionController::selectedAreaChanged);
-    }
+//    for (const auto &sig: _signalsSelection) {
+//        connect(this, sig, this, &SelectionController::normalizeBounds);
+//        connect(this, sig, this, &SelectionController::selectedAreaChanged);
+//    }
 }
 
 void SelectionController::disconnectSelectedArea() {
-    for (const auto &sig: _signalsSelection) {
-        disconnect(this, sig, this, &SelectionController::normalizeBounds);
-        disconnect(this, sig, this, &SelectionController::selectedAreaChanged);
-    }
+//    for (const auto &sig: _signalsSelection) {
+//        disconnect(this, sig, this, &SelectionController::normalizeBounds);
+//        disconnect(this, sig, this, &SelectionController::selectedAreaChanged);
+//    }
 }

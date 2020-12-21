@@ -59,7 +59,7 @@ signals:
     void currentItemChanged();
     void selectedAreaChanged();
     void modelChanged();
-private slots:
+public slots:
     void normalizeBounds();
 private:
     void connectCurrentItem();
