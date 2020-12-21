@@ -5,6 +5,8 @@
 #include <QRect>
 #include <subtablemodel.h>
 
+class PrivateSelectionController;
+
 class SelectionController : public QObject
 {
     Q_OBJECT
@@ -18,14 +20,13 @@ class SelectionController : public QObject
     Q_PROPERTY(QPoint currentItem READ currentItem WRITE setCurrentItem NOTIFY currentItemChanged)
     Q_PROPERTY(QRect selectedArea READ selectedArea WRITE setSelectedArea NOTIFY selectedAreaChanged)
     Q_PROPERTY(SubtableModel* model READ model WRITE setModel NOTIFY modelChanged)
-    static const QList<void (SelectionController::*)()> _signalsSelection;
-    static const QList<void (SelectionController::*)()> _signalsActive;
 public:
     static const QString ITEM_NAME;     // SelectionController
     static const bool IS_QML_REG;
     SelectionController(QObject *parent = nullptr);
     SelectionController(SubtableModel *model, QObject *parent = nullptr);
     virtual ~SelectionController() = default;
+    Q_INVOKABLE void normalizeBounds();
     Q_INVOKABLE void collapseToActive();
     int startRow() const;
     void setStartRow(int startRow);
@@ -59,13 +60,8 @@ signals:
     void currentItemChanged();
     void selectedAreaChanged();
     void modelChanged();
-private slots:
-    void normalizeBounds();
+
 private:
-    void connectCurrentItem();
-    void disconnectCurrentItem();
-    void connectSelectedArea();
-    void disconnectSelectedArea();
     int _startRow = -1;
     int _startColumn = -1;
     int _endRow = -1;
@@ -74,5 +70,6 @@ private:
     int _activeColumn = -1;
     bool _mouseSelection = false;
     SubtableModel *_model = nullptr;
+    PrivateSelectionController *_private = nullptr;
 };
 
