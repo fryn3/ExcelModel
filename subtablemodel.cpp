@@ -65,7 +65,7 @@ int SubtableModel::columnCount(const QModelIndex &parent) const {
     Q_UNUSED(parent);
     switch (subtableOrientation()) {
     case Qt::Horizontal:
-        return _subTableSizeMax;
+        return subtableSizeMax();
     case Qt::Vertical:
         return totalColumnCount();
     default:
@@ -133,7 +133,7 @@ bool SubtableModel::setSubtableOrientation(int orientation) {
 
 int SubtableModel::subtableSizeMax() const {
     if (_subTableSizeMax == SUBTABLE_SIZE_MAX_DEFAULT) {
-        _subTableSizeMax = subtableOrientation() == Qt::Horizontal
+        return subtableOrientation() == Qt::Horizontal
                            ? totalColumnCount() : totalRowCount();
     }
     return _subTableSizeMax;
