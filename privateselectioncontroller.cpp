@@ -4,7 +4,7 @@ const QList<QPair<void (PrivateSelectionController::*)(),
                   void (SelectionController::*)()>> PrivateSelectionController::_signalsSelection {
     { &PrivateSelectionController::signalStartRowChanged, &SelectionController::startRowChanged },
     { &PrivateSelectionController::signalStartColumnChanged, &SelectionController::startColumnChanged },
-    { &PrivateSelectionController::signalEndColumnChanged, &SelectionController::endColumnChanged },
+    { &PrivateSelectionController::signalEndRowChanged, &SelectionController::endRowChanged },
     { &PrivateSelectionController::signalEndColumnChanged, &SelectionController::endColumnChanged },
     { &PrivateSelectionController::signalMouseSelectionChanged, &SelectionController::mouseSelectionChanged },
 };
