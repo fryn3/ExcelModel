@@ -158,9 +158,9 @@ void SubtableModel::checkSubtableCountChanged() {
 int SubtableModel::subtableCount() const {
     switch (subtableOrientation()) {
     case Qt::Horizontal:
-        return totalColumnCount() / subtableSizeMax() + (totalColumnCount() % subtableSizeMax() ? 1 : 0);
+        return totalColumnCount() > 0 ? (totalColumnCount() / subtableSizeMax() + (totalColumnCount() % subtableSizeMax() ? 1 : 0)) : 0;
     case Qt::Vertical:
-        return totalRowCount() / subtableSizeMax() + (totalRowCount() % subtableSizeMax() ? 1 : 0);
+        return totalRowCount() > 0 ? (totalRowCount() / subtableSizeMax() + (totalRowCount() % subtableSizeMax() ? 1 : 0)) : 0;
     default:
         return -1;
     }
