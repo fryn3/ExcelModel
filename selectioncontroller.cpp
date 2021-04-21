@@ -21,21 +21,27 @@ SelectionController::SelectionController(SubtableModel *model, QObject *parent)
 void SelectionController::normalizeBounds() {
     if (_startRow > _endRow) {
         std::swap(_startRow, _endRow);
+        _private->emitStartRowChanged();
+        _private->emitEndRowChanged();
     }
     if (_startColumn > _endColumn) {
         std::swap(_startColumn, _endColumn);
+        _private->emitStartRowChanged();
+        _private->emitEndRowChanged();
     }
-    _startColumn = std::max(0, _startColumn);
-    _startRow = std::max(0, _startRow);
-    _endColumn = std::min(_endColumn, _model->totalColumnCount() - 1);
-    _endRow = std::min(_endRow, _model->totalRowCount() - 1);
-    _activeRow = std::min(std::max(0, _activeRow), _model->totalRowCount() - 1);
-    _activeColumn = std::min(std::max(0, _activeColumn), _model->totalColumnCount() - 1);
+    setStartColumn(std::max(0, _startColumn));
+    setStartRow(std::max(0, _startRow));
+    setEndColumn(std::min(_endColumn, _model->totalColumnCount() - 1));
+    setEndRow(std::min(_endRow, _model->totalRowCount() - 1));
+    setActiveRow(std::min(std::max(0, _activeRow), _model->totalRowCount() - 1));
+    setActiveColumn(std::min(std::max(0, _activeColumn), _model->totalColumnCount() - 1));
 }
 
 void SelectionController::collapseToActive() {
-    _startRow = _endRow = _activeRow;
-    _startColumn = _endColumn = _activeColumn;
+    setStartRow(activeRow());
+    setEndRow(activeRow());
+    setStartColumn(activeColumn());
+    setEndColumn(activeColumn());
 }
 
 int SelectionController::startRow() const {
