@@ -50,6 +50,7 @@ int SelectionController::startRow() const {
 
 void SelectionController::setStartRow(int startRow) {
     if (_startRow == startRow) { return; }
+    if (_disable && startRow != activeRow()) { return; }
     _startRow = startRow;
     _private->emitStartRowChanged();
 }
@@ -60,6 +61,7 @@ int SelectionController::startColumn() const {
 
 void SelectionController::setStartColumn(int startColumn) {
     if (_startColumn == startColumn) { return; }
+    if (_disable && startColumn != activeColumn()) { return; }
     _startColumn = startColumn;
     _private->emitStartColumnChanged();
 }
@@ -70,6 +72,7 @@ int SelectionController::endRow() const {
 
 void SelectionController::setEndRow(int endRow) {
     if (_endRow == endRow) { return; }
+    if (_disable && endRow != activeRow()) { return; }
     _endRow = endRow;
     _private->emitEndRowChanged();
 }
@@ -80,6 +83,7 @@ int SelectionController::endColumn() const {
 
 void SelectionController::setEndColumn(int endColumn) {
     if (_endColumn == endColumn) { return; }
+    if (_disable && endColumn != activeColumn()) { return; }
     _endColumn = endColumn;
     _private->emitEndColumnChanged();
 }
@@ -92,6 +96,9 @@ void SelectionController::setActiveRow(int activeRow) {
     if (_activeRow == activeRow) { return; }
     _activeRow = activeRow;
     _private->emitActiveRowChanged();
+    if (_disable) {
+        collapseToActive();
+    }
 }
 
 int SelectionController::activeColumn() const {
@@ -102,6 +109,9 @@ void SelectionController::setActiveColumn(int activeColumn) {
     if (_activeColumn == activeColumn) { return; }
     _activeColumn = activeColumn;
     _private->emitActiveColumnChanged();
+    if (_disable) {
+        collapseToActive();
+    }
 }
 
 bool SelectionController::mouseSelection() const {
@@ -123,6 +133,9 @@ void SelectionController::setCurrentItem(const QPoint &currentItem) {
     _private->disconnectCurrentItem();
     setActiveRow(currentItem.x());
     setActiveColumn(currentItem.y());
+    if (_disable) {
+        collapseToActive();
+    }
     _private->emitCurrentItemChanged();
     _private->connectCurrentItem();
 }
@@ -133,6 +146,7 @@ QRect SelectionController::selectedArea() const {
 
 void SelectionController::setSelectedArea(const QRect &selectedArea) {
     if (SelectionController::selectedArea() == selectedArea) { return; }
+    if (_disable) { return; }
     _private->disconnectSelectedArea();
     const auto &topLeft = selectedArea.topLeft();
     setStartRow(topLeft.x());
@@ -152,4 +166,17 @@ void SelectionController::setModel(SubtableModel *model) {
     if (_model == model) { return; }
     _model = model;
     _private->emitModelChanged();
+}
+
+bool SelectionController::disable() const {
+    return _disable;
+}
+
+void SelectionController::setDisable(bool disable) {
+    if (_disable == disable) { return; }
+    _disable = disable;
+    if (_disable) {
+        collapseToActive();
+    }
+    emit disableChanged();
 }
