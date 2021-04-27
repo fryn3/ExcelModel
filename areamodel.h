@@ -37,7 +37,7 @@ public:
     int firstRow() const;
     void setFirstRow(int firstRow);
     int firstColumn() const;
-    void setFirstColumn(int firstRow);
+    void setFirstColumn(int firstColumn);
 signals:
     void sourceModelChanged();
     void areaSizeChanged();
@@ -48,6 +48,10 @@ signals:
     void firstRowChanged();
     void firstColumnChanged();
 private:
+    int rowMapToSource(int areaRow) const;
+    int columnMapToSource(int areaRow) const;
+    QModelIndex indexMapToSource(const QModelIndex &indexArea) const;
+
     QAbstractTableModel *_sourceModel = nullptr;
     QSize _areaSize = QSize(4096, 4096);
     int _splitOrientation = SPLIT_ORIENTATION_DEFAULT;
@@ -55,7 +59,6 @@ private:
     bool __fromParent = false;
 
 public:
-    Q_INVOKABLE QModelIndex index(int row, int column, const QModelIndex &parent = QModelIndex()) const override;
     Q_INVOKABLE int rowCount(const QModelIndex &parent = QModelIndex()) const override;
     Q_INVOKABLE int columnCount(const QModelIndex &parent = QModelIndex()) const override;
     Q_INVOKABLE QVariant data(const QModelIndex &index, int role = Qt::DisplayRole) const override;

@@ -121,10 +121,13 @@ QSize AreaModel::areaSize() const {
 
 void AreaModel::setAreaSize(const QSize &size) {
     if (_areaSize == size) { return; }
+    /// \todo можно вместо ресета вызывать Insert/Remove
+    beginResetModel();
     __fromParent = true;
     setAreaRowsSize(size.height());
     setAreaColumnsSize(size.width());
     __fromParent = false;
+    endResetModel();
     emit areaSizeChanged();
 }
 
@@ -134,9 +137,13 @@ int AreaModel::areaRowsSize() const {
 
 void AreaModel::setAreaRowsSize(int rowsSize) {
     if (_areaSize.height() == rowsSize) { return; }
+    if (!__fromParent) {
+        beginResetModel();
+    }
     _areaSize.setHeight(rowsSize);
     emit areaRowsSizeChanged();
     if (!__fromParent) {
+        endResetModel();
         emit areaSizeChanged();
     }
 }
@@ -147,9 +154,13 @@ int AreaModel::areaColumnsSize() const {
 
 void AreaModel::setAreaColumnsSize(int columnsSize) {
     if (_areaSize.width() == columnsSize) { return; }
+    if (!__fromParent) {
+        beginResetModel();
+    }
     _areaSize.setWidth(columnsSize);
     emit areaColumnsSizeChanged();
     if (!__fromParent) {
+        endResetModel();
         emit areaColumnsSizeChanged();
     }
 }
@@ -160,7 +171,9 @@ int AreaModel::splitOrientation() const {
 
 void AreaModel::setSplitOrientation(int splitOrientation) {
     if (_splitOrientation == splitOrientation) { return; }
+    beginResetModel();
     _splitOrientation = splitOrientation;
+    endResetModel();
     emit splitOrientationChanged();
 }
 
@@ -170,10 +183,16 @@ QPoint AreaModel::first() const {
 
 void AreaModel::setFirst(QPoint point) {
     if (_first == point) { return; }
+    if (point.x() >= _sourceModel->columnCount()
+            || point.y() >= _sourceModel->rowCount()) {
+        return;
+    }
+    beginResetModel();
     __fromParent = true;
     setFirstColumn(point.x());
     setFirstRow(point.y());
     __fromParent = false;
+    endResetModel();
     emit firstChanged();
 }
 
@@ -183,9 +202,14 @@ int AreaModel::firstRow() const {
 
 void AreaModel::setFirstRow(int firstRow) {
     if (_first.y() == firstRow) { return; }
+    if (firstRow >= _sourceModel->rowCount()) { return; }
+    if (!__fromParent) {
+        beginResetModel();
+    }
     _first.setY(firstRow);
     emit firstRowChanged();
     if (!__fromParent) {
+        endResetModel();
         emit firstChanged();
     }
 }
@@ -194,23 +218,38 @@ int AreaModel::firstColumn() const {
     return _first.x();
 }
 
-void AreaModel::setFirstColumn(int firstRow) {
-    if (_first.x() == firstRow) { return; }
-    _first.setX(firstRow);
+void AreaModel::setFirstColumn(int firstColumn) {
+    if (_first.x() == firstColumn) { return; }
+    if (firstColumn >= _sourceModel->columnCount()) { return; }
+    if (!__fromParent) {
+        beginResetModel();
+    }
+    _first.setX(firstColumn);
     emit firstColumnChanged();
     if (!__fromParent) {
+        endResetModel();
         emit firstChanged();
     }
 }
 
-QModelIndex AreaModel::index(int row, int column, const QModelIndex &parent) const {
-    return _sourceModel->index(row, column, parent);
+int AreaModel::rowMapToSource(int areaRow) const {
+    return firstRow() + areaRow;
+}
+
+int AreaModel::columnMapToSource(int areaColumn) const {
+    return firstColumn() + areaColumn;
+}
+
+QModelIndex AreaModel::indexMapToSource(const QModelIndex &indexArea) const {
+    return _sourceModel->index(rowMapToSource(indexArea.row()),
+                               columnMapToSource(indexArea.column()));
 }
 
 int AreaModel::rowCount(const QModelIndex &parent) const {
     int r;
-    if (firstRow() + areaRowsSize() > _sourceModel->rowCount(parent)) {
-        r = _sourceModel->rowCount(parent) - firstRow();
+    auto sourceIndex = indexMapToSource(parent);
+    if (firstRow() + areaRowsSize() > _sourceModel->rowCount(sourceIndex)) {
+        r = _sourceModel->rowCount(sourceIndex) - firstRow();
     } else {
         r = areaRowsSize();
     }
@@ -219,8 +258,9 @@ int AreaModel::rowCount(const QModelIndex &parent) const {
 
 int AreaModel::columnCount(const QModelIndex &parent) const {
     int r;
-    if (firstColumn() + areaColumnsSize() > _sourceModel->columnCount(parent)) {
-        r = _sourceModel->columnCount(parent) - firstColumn();
+    auto sourceIndex = indexMapToSource(parent);
+    if (firstColumn() + areaColumnsSize() > _sourceModel->columnCount(sourceIndex)) {
+        r = _sourceModel->columnCount(sourceIndex) - firstColumn();
     } else {
         r = areaColumnsSize();
     }
@@ -228,31 +268,47 @@ int AreaModel::columnCount(const QModelIndex &parent) const {
 }
 
 QVariant AreaModel::data(const QModelIndex &index, int role) const {
-    return _sourceModel->data(_sourceModel->index(index.row() + firstRow(), index.column() + firstColumn()), role);
+    return _sourceModel->data(indexMapToSource(index), role);
 }
 
 bool AreaModel::setData(const QModelIndex &index, const QVariant &value, int role) {
-    return _sourceModel->setData(index, value, role);
+    return _sourceModel->setData(indexMapToSource(index), value, role);
 }
 
 QModelIndex AreaModel::sibling(int row, int column, const QModelIndex &idx) const {
-    return _sourceModel->sibling(row, column, idx);
+    return _sourceModel->sibling(row, column, indexMapToSource(idx));
 }
 
 QVariant AreaModel::headerData(int section, Qt::Orientation orientation, int role) const {
-    return _sourceModel->headerData(section, orientation, role);
+    switch (orientation) {
+    case Qt::Horizontal:
+        return _sourceModel->headerData(columnMapToSource(section), orientation, role);
+    case Qt::Vertical:
+        return _sourceModel->headerData(rowMapToSource(section), orientation, role);
+    default:
+        qDebug() << __PRETTY_FUNCTION__ << "orientation is bad:" << orientation;
+        return QVariant();
+    }
 }
 
 bool AreaModel::setHeaderData(int section, Qt::Orientation orientation, const QVariant &value, int role) {
-    return _sourceModel->setHeaderData(section, orientation, value, role);
+    switch (orientation) {
+    case Qt::Horizontal:
+        return _sourceModel->setHeaderData(columnMapToSource(section), orientation, value, role);
+    case Qt::Vertical:
+        return _sourceModel->setHeaderData(rowMapToSource(section), orientation, value, role);
+    default:
+        qDebug() << __PRETTY_FUNCTION__ << "orientation is bad:" << orientation;
+        return false;
+    }
 }
 
 QMap<int, QVariant> AreaModel::itemData(const QModelIndex &index) const {
-    return _sourceModel->itemData(index);
+    return _sourceModel->itemData(indexMapToSource(index));
 }
 
 bool AreaModel::setItemData(const QModelIndex &index, const QMap<int, QVariant> &roles) {
-    return _sourceModel->setItemData(index, roles);
+    return _sourceModel->setItemData(indexMapToSource(index), roles);
 }
 
 QStringList AreaModel::mimeTypes() const {
@@ -264,11 +320,11 @@ QMimeData *AreaModel::mimeData(const QModelIndexList &indexes) const {
 }
 
 bool AreaModel::canDropMimeData(const QMimeData *data, Qt::DropAction action, int row, int column, const QModelIndex &parent) const {
-    return _sourceModel->canDropMimeData(data, action, row, column, parent);
+    return _sourceModel->canDropMimeData(data, action, row, column, indexMapToSource(parent));
 }
 
 bool AreaModel::dropMimeData(const QMimeData *data, Qt::DropAction action, int row, int column, const QModelIndex &parent) {
-    return _sourceModel->dropMimeData(data, action, row, column, parent);
+    return _sourceModel->dropMimeData(data, action, row, column, indexMapToSource(parent));
 }
 
 Qt::DropActions AreaModel::supportedDropActions() const {
@@ -280,39 +336,39 @@ Qt::DropActions AreaModel::supportedDragActions() const {
 }
 
 bool AreaModel::insertRows(int row, int count, const QModelIndex &parent) {
-    return _sourceModel->insertRows(row, count, parent);
+    return _sourceModel->insertRows(row, count, indexMapToSource(parent));
 }
 
 bool AreaModel::insertColumns(int column, int count, const QModelIndex &parent) {
-    return _sourceModel->insertColumns(column, count, parent);
+    return _sourceModel->insertColumns(column, count, indexMapToSource(parent));
 }
 
 bool AreaModel::removeRows(int row, int count, const QModelIndex &parent) {
-    return _sourceModel->removeRows(row, count, parent);
+    return _sourceModel->removeRows(row, count, indexMapToSource(parent));
 }
 
 bool AreaModel::removeColumns(int column, int count, const QModelIndex &parent) {
-    return _sourceModel->removeColumns(column, count, parent);
+    return _sourceModel->removeColumns(column, count, indexMapToSource(parent));
 }
 
 bool AreaModel::moveRows(const QModelIndex &sourceParent, int sourceRow, int count, const QModelIndex &destinationParent, int destinationChild) {
-    return _sourceModel->moveRows(sourceParent, sourceRow, count, destinationParent, destinationChild);
+    return _sourceModel->moveRows(indexMapToSource(sourceParent), sourceRow, count, indexMapToSource(destinationParent), destinationChild);
 }
 
 bool AreaModel::moveColumns(const QModelIndex &sourceParent, int sourceColumn, int count, const QModelIndex &destinationParent, int destinationChild) {
-    return _sourceModel->moveColumns(sourceParent, sourceColumn, count, destinationParent, destinationChild);
+    return _sourceModel->moveColumns(indexMapToSource(sourceParent), sourceColumn, count, indexMapToSource(destinationParent), destinationChild);
 }
 
 void AreaModel::fetchMore(const QModelIndex &parent) {
-    return _sourceModel->fetchMore(parent);
+    return _sourceModel->fetchMore(indexMapToSource(parent));
 }
 
 bool AreaModel::canFetchMore(const QModelIndex &parent) const {
-    return _sourceModel->canFetchMore(parent);
+    return _sourceModel->canFetchMore(indexMapToSource(parent));
 }
 
 Qt::ItemFlags AreaModel::flags(const QModelIndex &index) const {
-    return _sourceModel->flags(index);
+    return _sourceModel->flags(indexMapToSource(index));
 }
 
 void AreaModel::sort(int column, Qt::SortOrder order) {
@@ -320,7 +376,7 @@ void AreaModel::sort(int column, Qt::SortOrder order) {
 }
 
 QModelIndex AreaModel::buddy(const QModelIndex &index) const {
-    return _sourceModel->buddy(index);
+    return _sourceModel->buddy(indexMapToSource(index));
 }
 
 QModelIndexList AreaModel::match(const QModelIndex &start, int role, const QVariant &value, int hits, Qt::MatchFlags flags) const {
@@ -328,7 +384,7 @@ QModelIndexList AreaModel::match(const QModelIndex &start, int role, const QVari
 }
 
 QSize AreaModel::span(const QModelIndex &index) const {
-    return _sourceModel->span(index);
+    return _sourceModel->span(indexMapToSource(index));
 }
 
 QHash<int, QByteArray> AreaModel::roleNames() const {
