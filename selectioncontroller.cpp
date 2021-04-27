@@ -14,7 +14,7 @@ const bool SelectionController::IS_QML_REG = registerMe();
 
 SelectionController::SelectionController(QObject *parent) : SelectionController(nullptr, parent) { }
 
-SelectionController::SelectionController(SubtableModel *model, QObject *parent)
+SelectionController::SelectionController(QAbstractItemModel *model, QObject *parent)
         : QObject(parent), _model(model),
           _private(new PrivateSelectionController(this)) { }
 
@@ -31,10 +31,10 @@ void SelectionController::normalizeBounds() {
     }
     setStartColumn(std::max(0, _startColumn));
     setStartRow(std::max(0, _startRow));
-    setEndColumn(std::min(_endColumn, _model->totalColumnCount() - 1));
-    setEndRow(std::min(_endRow, _model->totalRowCount() - 1));
-    setActiveRow(std::min(std::max(0, _activeRow), _model->totalRowCount() - 1));
-    setActiveColumn(std::min(std::max(0, _activeColumn), _model->totalColumnCount() - 1));
+    setEndColumn(std::min(_endColumn, _model->columnCount() - 1));
+    setEndRow(std::min(_endRow, _model->rowCount() - 1));
+    setActiveRow(std::min(std::max(0, _activeRow), _model->rowCount() - 1));
+    setActiveColumn(std::min(std::max(0, _activeColumn), _model->columnCount() - 1));
 }
 
 void SelectionController::collapseToActive() {
@@ -158,11 +158,11 @@ void SelectionController::setSelectedArea(const QRect &selectedArea) {
     _private->connectSelectedArea();
 }
 
-SubtableModel *SelectionController::model() const {
+QAbstractItemModel *SelectionController::model() const {
     return _model;
 }
 
-void SelectionController::setModel(SubtableModel *model) {
+void SelectionController::setModel(QAbstractItemModel *model) {
     if (_model == model) { return; }
     _model = model;
     _private->emitModelChanged();

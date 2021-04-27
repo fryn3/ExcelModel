@@ -20,12 +20,12 @@ class SelectionController : public QObject
     Q_PROPERTY(bool disable READ disable WRITE setDisable NOTIFY disableChanged)
     Q_PROPERTY(QPoint currentItem READ currentItem WRITE setCurrentItem NOTIFY currentItemChanged)
     Q_PROPERTY(QRect selectedArea READ selectedArea WRITE setSelectedArea NOTIFY selectedAreaChanged)
-    Q_PROPERTY(SubtableModel* model READ model WRITE setModel NOTIFY modelChanged)
+    Q_PROPERTY(QAbstractItemModel* model READ model WRITE setModel NOTIFY modelChanged)
 public:
     static const QString ITEM_NAME;     // SelectionController
     static const bool IS_QML_REG;
     SelectionController(QObject *parent = nullptr);
-    SelectionController(SubtableModel *model, QObject *parent = nullptr);
+    SelectionController(QAbstractItemModel *model, QObject *parent = nullptr);
     virtual ~SelectionController() = default;
     Q_INVOKABLE void normalizeBounds();
     Q_INVOKABLE void collapseToActive();
@@ -49,8 +49,8 @@ public:
     void setCurrentItem(const QPoint &currentItem);
     QRect selectedArea() const;
     void setSelectedArea(const QRect &selectedArea);
-    SubtableModel *model() const;
-    void setModel(SubtableModel *model);
+    QAbstractItemModel *model() const;
+    void setModel(QAbstractItemModel *model);
 
 signals:
     void startRowChanged();
@@ -74,7 +74,7 @@ private:
     int _activeColumn = -1;
     bool _mouseSelection = false;
     bool _disable = false;
-    SubtableModel *_model = nullptr;
+    QAbstractItemModel *_model = nullptr;
     PrivateSelectionController *_private = nullptr;
 };
 
