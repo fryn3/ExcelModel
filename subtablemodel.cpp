@@ -151,7 +151,7 @@ void SubtableModel::checkSubtableCountChanged() {
     int nowCount = subtableCount();
     if (nowCount != __subTableCountPrev) {
         __subTableCountPrev = nowCount;
-        emit checkSubtableCountChanged();
+        emit subtableCountChanged();
     }
 }
 
