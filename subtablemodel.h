@@ -54,7 +54,8 @@ public:
         SubtableRoleEND
     };
     Q_ENUM(SubtableRole)
-    static const std::array<QString, SubtableRoleEND - SubtableRoleBEGIN> SUBTABLE_ROLE_STR;
+    static const int SUBTABLE_ROLE_COUNT = SubtableRoleEND - SubtableRoleBEGIN;
+    static const std::array<QString, SUBTABLE_ROLE_COUNT> SUBTABLE_ROLE_STR;
 
     /*!
      * \brief Возвращает количество строк для полной таблицы

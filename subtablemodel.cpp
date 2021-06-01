@@ -16,7 +16,7 @@ const bool SubtableModel::IS_QML_REG = registerMe();
 
 
 const std::array
-    <QString, SubtableModel::SubtableRoleEND - SubtableModel::SubtableRoleBEGIN>
+    <QString, SubtableModel::SUBTABLE_ROLE_COUNT>
         SubtableModel::SUBTABLE_ROLE_STR {
     // alias std roles
     "display",
