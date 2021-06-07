@@ -18,7 +18,7 @@ class SelectionController : public QObject
     Q_PROPERTY(int activeColumn READ activeColumn WRITE setActiveColumn NOTIFY activeColumnChanged)
     Q_PROPERTY(bool mouseSelection READ mouseSelection WRITE setMouseSelection NOTIFY mouseSelectionChanged)
     Q_PROPERTY(bool disable READ disable WRITE setDisable NOTIFY disableChanged)
-    Q_PROPERTY(QPoint currentItem READ currentItem WRITE setCurrentItem NOTIFY currentItemChanged)
+    Q_PROPERTY(QPoint activeCell READ activeCell WRITE setActiveCell NOTIFY activeCellChanged)
     Q_PROPERTY(QRect selectedArea READ selectedArea WRITE setSelectedArea NOTIFY selectedAreaChanged)
     Q_PROPERTY(QAbstractItemModel* model READ model WRITE setModel NOTIFY modelChanged)
 public:
@@ -45,12 +45,13 @@ public:
     void setMouseSelection(bool mouseSelection);
     bool disable() const;
     void setDisable(bool disable);
-    QPoint currentItem() const;
-    void setCurrentItem(const QPoint &currentItem);
+    QPoint activeCell() const;
+    void setActiveCell(const QPoint &active);
     QRect selectedArea() const;
     void setSelectedArea(const QRect &selectedArea);
     QAbstractItemModel *model() const;
     void setModel(QAbstractItemModel *model);
+    QString toString() const;
 
 signals:
     void startRowChanged();
@@ -61,7 +62,7 @@ signals:
     void activeColumnChanged();
     void mouseSelectionChanged();
     void disableChanged();
-    void currentItemChanged();
+    void activeCellChanged();
     void selectedAreaChanged();
     void modelChanged();
 

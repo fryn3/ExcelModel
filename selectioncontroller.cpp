@@ -124,24 +124,24 @@ void SelectionController::setMouseSelection(bool mouseSelection) {
     _private->emitMouseSelectionChanged();
 }
 
-QPoint SelectionController::currentItem() const {
+QPoint SelectionController::activeCell() const {
     return QPoint(_activeRow, _activeColumn);
 }
 
-void SelectionController::setCurrentItem(const QPoint &currentItem) {
-    if (SelectionController::currentItem() == currentItem) { return; }
-    _private->disconnectCurrentItem();
-    setActiveRow(currentItem.x());
-    setActiveColumn(currentItem.y());
+void SelectionController::setActiveCell(const QPoint &active) {
+    if (activeCell() == active) { return; }
+    _private->disconnectActiveCell();
+    setActiveRow(active.x());
+    setActiveColumn(active.y());
     if (_disable) {
         collapseToActive();
     }
-    _private->emitCurrentItemChanged();
-    _private->connectCurrentItem();
+    _private->emitActiveCellChanged();
+    _private->connectActiveCell();
 }
 
 QRect SelectionController::selectedArea() const {
-    return QRect(QPoint(_startRow, _startColumn), QPoint(_endRow, _endColumn));
+    return QRect(QPoint(_startColumn, _startRow), QPoint(_endColumn, _endRow));
 }
 
 void SelectionController::setSelectedArea(const QRect &selectedArea) {
@@ -166,6 +166,13 @@ void SelectionController::setModel(QAbstractItemModel *model) {
     if (_model == model) { return; }
     _model = model;
     _private->emitModelChanged();
+}
+
+QString SelectionController::toString() const {
+    return QString("SelectionController(Active(%1,%2), Selection(%3,%4 %5x%6)")
+            .arg(activeRow()).arg(activeColumn())
+            .arg(startColumn()).arg(startRow())
+            .arg(selectedArea().width()).arg(selectedArea().height());
 }
 
 bool SelectionController::disable() const {

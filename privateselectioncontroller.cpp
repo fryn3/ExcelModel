@@ -22,25 +22,25 @@ PrivateSelectionController::PrivateSelectionController(SelectionController *pare
     for (const auto &sig: _signalsSelection) {
         connect(this, sig.first, _parent, sig.second);
     }
-    connect(this, &PrivateSelectionController::signalCurrentItemChanged,
-            parent, &SelectionController::currentItemChanged);
+    connect(this, &PrivateSelectionController::signalActiveCellChanged,
+            parent, &SelectionController::activeCellChanged);
     connect(this, &PrivateSelectionController::signalSelectedAreaChanged,
             parent, &SelectionController::selectedAreaChanged);
     connect(this, &PrivateSelectionController::signalModelChanged,
             parent, &SelectionController::modelChanged);
-    connectCurrentItem();
+    connectActiveCell();
     connectSelectedArea();
 }
 
-void PrivateSelectionController::connectCurrentItem() {
+void PrivateSelectionController::connectActiveCell() {
     for (const auto &sig: _signalsActive) {
-        connect(this, sig.first, _parent, &SelectionController::currentItemChanged);
+        connect(this, sig.first, _parent, &SelectionController::activeCellChanged);
     }
 }
 
-void PrivateSelectionController::disconnectCurrentItem() {
+void PrivateSelectionController::disconnectActiveCell() {
     for (const auto &sig: _signalsActive) {
-        disconnect(this, sig.first, _parent, &SelectionController::currentItemChanged);
+        disconnect(this, sig.first, _parent, &SelectionController::activeCellChanged);
     }
 }
 

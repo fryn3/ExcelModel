@@ -19,12 +19,12 @@ public:
     void emitActiveRowChanged()         { emit signalActiveRowChanged(); }
     void emitActiveColumnChanged()      { emit signalActiveColumnChanged(); }
     void emitMouseSelectionChanged()    { emit signalMouseSelectionChanged(); }
-    void emitCurrentItemChanged()       { emit signalCurrentItemChanged(); }
+    void emitActiveCellChanged()        { emit signalActiveCellChanged(); }
     void emitSelectedAreaChanged()      { emit signalSelectedAreaChanged(); }
     void emitModelChanged()             { emit signalModelChanged(); }
 
-    void connectCurrentItem();
-    void disconnectCurrentItem();
+    void connectActiveCell();
+    void disconnectActiveCell();
     void connectSelectedArea();
     void disconnectSelectedArea();
 
@@ -36,7 +36,7 @@ signals:
     void signalActiveRowChanged();
     void signalActiveColumnChanged();
     void signalMouseSelectionChanged();
-    void signalCurrentItemChanged();
+    void signalActiveCellChanged();
     void signalSelectedAreaChanged();
     void signalModelChanged();
 private:
