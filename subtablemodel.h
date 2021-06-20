@@ -25,7 +25,7 @@ public:
     static const int SUBTABLE_ORIENTATION_DEFAULT = Qt::Vertical;
     static const int SUBTABLE_SIZE_MAX_DEFAULT = -1;
     explicit SubtableModel(QObject *parent = nullptr);
-    virtual ~SubtableModel() = default;
+    virtual ~SubtableModel() override = default;
 
     enum SubtableRole {
         SubtableRoleBEGIN = Qt::UserRole,
@@ -50,6 +50,7 @@ public:
         SubtableRoleDeploy,             // развернута ли группа
         SubtableRoleGroupSize,          // размер группы
         SubtableRoleIndexInGroup,       // индекс в группе
+        SubtableRoleMarkersList,        // номер маркера (MarkerEnum)
 
         SubtableRoleEND
     };

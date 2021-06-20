@@ -38,6 +38,7 @@ const std::array
     "deploy",
     "groupSize",
     "indexInGroup",
+    "markersList",
 };
 
 SubtableModel::SubtableModel(QObject *parent) : QAbstractTableModel(parent) {
