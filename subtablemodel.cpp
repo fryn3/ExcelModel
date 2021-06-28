@@ -38,10 +38,14 @@ const std::array
     "deploy",
     "groupSize",
     "indexInGroup",
+    "groupSequence",
     "markersList",
 };
 
-SubtableModel::SubtableModel(QObject *parent) : QAbstractTableModel(parent) {
+SubtableModel::SubtableModel(QObject *parent)
+    : QAbstractTableModel(parent),
+      _headerHModel(new HeaderModel(this, Qt::Horizontal)),
+      _headerVModel(new HeaderModel(this, Qt::Vertical)) {
     /// \todo не делать привязку к this, для нормальной работы disconnect.
     connect(this, &QAbstractItemModel::columnsInserted, this, &SubtableModel::checkSubtableCountChanged);
     connect(this, &QAbstractItemModel::columnsRemoved, this, &SubtableModel::checkSubtableCountChanged);
@@ -226,6 +230,14 @@ int SubtableModel::absoluteColumn(int column, int subtable) const {
     }
 }
 
+HeaderModel *SubtableModel::headerVModel() const {
+    return _headerVModel;
+}
+
+HeaderModel *SubtableModel::headerHModel() const {
+    return _headerHModel;
+}
+
 int SubtableModel::isGoodRole(int role) const {
     if (role >= Qt::UserRole) {
         return role;
@@ -241,6 +253,7 @@ int SubtableModel::isGoodRole(int role) const {
     case Qt::ToolTipPropertyRole:
         return SubtableRoleToolTip;
     default:
+        qDebug() << __PRETTY_FUNCTION__ << "bad role" << role;
         return -1;
     }
 }

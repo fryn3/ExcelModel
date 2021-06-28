@@ -8,12 +8,14 @@ INCLUDEPATH += $$PWD
 
 SOURCES += \
     $$PWD/areamodel.cpp \
+    $$PWD/headermodel.cpp \
     $$PWD/privateselectioncontroller.cpp \
     $$PWD/selectioncontroller.cpp \
     $$PWD/subtablemodel.cpp
 
 HEADERS += \
     $$PWD/areamodel.h \
+    $$PWD/headermodel.h \
     $$PWD/privateselectioncontroller.h \
     $$PWD/selectioncontroller.h \
     $$PWD/subtablemodel.h

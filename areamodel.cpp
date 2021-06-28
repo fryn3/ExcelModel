@@ -13,13 +13,17 @@ const QString AreaModel::ITEM_NAME = "AreaModel";
 const bool AreaModel::IS_QML_REG = registerMe();
 
 AreaModel::AreaModel(QAbstractTableModel *model, QObject *parent)
-    : QAbstractTableModel(parent) {
+    : QAbstractTableModel(parent),
+      _headerHModel(new HeaderModel(this, Qt::Horizontal)),
+      _headerVModel(new HeaderModel(this, Qt::Vertical))  {
     setSourceModel(model);
 }
 
 AreaModel::AreaModel(QAbstractTableModel *model, int splitOrientation, QObject *parent)
     : QAbstractTableModel(parent),
-      _splitOrientation(splitOrientation) {
+      _splitOrientation(splitOrientation),
+      _headerHModel(new HeaderModel(this, Qt::Horizontal)),
+      _headerVModel(new HeaderModel(this, Qt::Vertical))  {
     setSourceModel(model);
 }
 
@@ -230,6 +234,14 @@ void AreaModel::setFirstColumn(int firstColumn) {
         endResetModel();
         emit firstChanged();
     }
+}
+
+HeaderModel *AreaModel::headerHModel() const {
+    return _headerHModel;
+}
+
+HeaderModel *AreaModel::headerVModel() const {
+    return _headerVModel;
 }
 
 int AreaModel::rowMapToSource(int areaRow) const {

@@ -2,6 +2,8 @@
 
 #include <QAbstractTableModel>
 
+#include "headermodel.h"
+
 /*!
  * \class SubtableModel
  * \brief Табличная модель
@@ -13,12 +15,13 @@
  * Для использования модели в cpp коде, необходимо унаследоваться от этого
  * класса и переопределить функции totalRowCount и totalColumnCount.
  */
-class SubtableModel : public QAbstractTableModel
-{
+class SubtableModel : public QAbstractTableModel {
     Q_OBJECT
     Q_PROPERTY(int subtableOrientation READ subtableOrientation WRITE setSubtableOrientation NOTIFY subtableOrientationChanged)
     Q_PROPERTY(int subtableSizeMax READ subtableSizeMax WRITE setSubtableSizeMax NOTIFY subtableSizeMaxChanged)
     Q_PROPERTY(int subtableCount READ subtableCount NOTIFY subtableCountChanged)
+    Q_PROPERTY(QAbstractItemModel* headerHModel READ headerHModel NOTIFY headerHModelChanged)
+    Q_PROPERTY(QAbstractItemModel* headerVModel READ headerVModel NOTIFY headerVModelChanged)
 public:
     static const QString ITEM_NAME;     // SubtableModel
     static const bool IS_QML_REG;
@@ -50,6 +53,7 @@ public:
         SubtableRoleDeploy,             // развернута ли группа
         SubtableRoleGroupSize,          // размер группы
         SubtableRoleIndexInGroup,       // индекс в группе
+        SubtableRoleGroupSequence,      // последовательность внутри шины
         SubtableRoleMarkersList,        // номер маркера (MarkerEnum)
 
         SubtableRoleEND
@@ -191,12 +195,19 @@ public:
      */
     Q_INVOKABLE int absoluteColumn(int column, int subtable) const;
 
+    HeaderModel *headerHModel() const;
+    HeaderModel *headerVModel() const;
+
 signals:
     void subtableOrientationChanged();
     void subtableSizeMaxChanged();
     void subtableCountChanged();
 
+    void headerHModelChanged();
+    void headerVModelChanged();
+
 protected slots:
+
     /*!
      * \brief Ф-ция проверки изменения количества подтаблиц
      *
@@ -222,6 +233,9 @@ protected:
     int _subTableOrientation = SUBTABLE_ORIENTATION_DEFAULT;
     mutable int _subTableSizeMax = SUBTABLE_SIZE_MAX_DEFAULT;
     int __subTableCountPrev = 1;  ///< по умолчанию одна таблица
+
+    HeaderModel *_headerHModel = nullptr;
+    HeaderModel *_headerVModel = nullptr;
 public:
     QHash<int, QByteArray> roleNames() const override;
 };

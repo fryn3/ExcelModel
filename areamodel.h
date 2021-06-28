@@ -4,8 +4,9 @@
 #include <QPoint>
 #include <QSize>
 
-class AreaModel : public QAbstractTableModel
-{
+#include "headermodel.h"
+
+class AreaModel : public QAbstractTableModel {
     Q_OBJECT
     Q_PROPERTY(QAbstractTableModel* sourceModel READ sourceModel WRITE setSourceModel NOTIFY sourceModelChanged)
     Q_PROPERTY(QSize areaSize READ areaSize WRITE setAreaSize NOTIFY areaSizeChanged)
@@ -15,6 +16,9 @@ class AreaModel : public QAbstractTableModel
     Q_PROPERTY(QPoint first READ first WRITE setFirst NOTIFY firstChanged)
     Q_PROPERTY(int firstRow READ firstRow WRITE setFirstRow NOTIFY firstRowChanged)
     Q_PROPERTY(int firstColumn READ firstColumn WRITE setFirstColumn NOTIFY firstColumnChanged)
+    Q_PROPERTY(QAbstractItemModel* headerHModel READ headerHModel NOTIFY headerHModelChanged)
+    Q_PROPERTY(QAbstractItemModel* headerVModel READ headerVModel NOTIFY headerVModelChanged)
+
 public:
     static const QString ITEM_NAME;     // AreaModel
     static const bool IS_QML_REG;
@@ -38,6 +42,9 @@ public:
     void setFirstRow(int firstRow);
     int firstColumn() const;
     void setFirstColumn(int firstColumn);
+
+    HeaderModel *headerHModel() const;
+    HeaderModel *headerVModel() const;
 signals:
     void sourceModelChanged();
     void areaSizeChanged();
@@ -47,6 +54,9 @@ signals:
     void firstChanged();
     void firstRowChanged();
     void firstColumnChanged();
+
+    void headerHModelChanged();
+    void headerVModelChanged();
 private:
     int rowMapToSource(int areaRow) const;
     int columnMapToSource(int areaRow) const;
@@ -58,6 +68,8 @@ private:
     QPoint _first;
     bool __fromParent = false;
 
+    HeaderModel *_headerHModel = nullptr;
+    HeaderModel *_headerVModel = nullptr;
 public:
     Q_INVOKABLE int rowCount(const QModelIndex &parent = QModelIndex()) const override;
     Q_INVOKABLE int columnCount(const QModelIndex &parent = QModelIndex()) const override;
