@@ -89,7 +89,7 @@ void SelectionController::setEndColumn(int endColumn) {
 }
 
 int SelectionController::activeRow() const {
-    return _activeRow;
+    return _activeRow < 0 ? 0 : _activeRow;
 }
 
 void SelectionController::setActiveRow(int activeRow) {
@@ -102,7 +102,7 @@ void SelectionController::setActiveRow(int activeRow) {
 }
 
 int SelectionController::activeColumn() const {
-    return _activeColumn;
+    return _activeColumn < 0 ? 0 : _activeColumn;
 }
 
 void SelectionController::setActiveColumn(int activeColumn) {
@@ -125,14 +125,14 @@ void SelectionController::setMouseSelection(bool mouseSelection) {
 }
 
 QPoint SelectionController::activeCell() const {
-    return QPoint(_activeRow, _activeColumn);
+    return QPoint(activeColumn(), activeRow());
 }
 
 void SelectionController::setActiveCell(const QPoint &active) {
     if (activeCell() == active) { return; }
     _private->disconnectActiveCell();
-    setActiveRow(active.x());
-    setActiveColumn(active.y());
+    setActiveRow(active.y());
+    setActiveColumn(active.x());
     if (_disable) {
         collapseToActive();
     }
@@ -149,11 +149,11 @@ void SelectionController::setSelectedArea(const QRect &selectedArea) {
     if (_disable) { return; }
     _private->disconnectSelectedArea();
     const auto &topLeft = selectedArea.topLeft();
-    setStartRow(topLeft.x());
-    setStartColumn(topLeft.y());
+    setStartRow(topLeft.y());
+    setStartColumn(topLeft.x());
     const auto &bottomRight = selectedArea.bottomRight();
-    setEndRow(bottomRight.x());
-    setEndColumn(bottomRight.y());
+    setEndRow(bottomRight.y());
+    setEndColumn(bottomRight.x());
     _private->emitSelectedAreaChanged();
     _private->connectSelectedArea();
 }
