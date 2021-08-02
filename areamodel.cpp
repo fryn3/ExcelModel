@@ -119,7 +119,7 @@ void AreaModel::setSourceModel(QAbstractTableModel *model) {
     emit sourceModelChanged();
 }
 
-QSize AreaModel::areaSize() const {
+const QSize &AreaModel::areaSize() const {
     return _areaSize;
 }
 
@@ -133,6 +133,10 @@ void AreaModel::setAreaSize(const QSize &size) {
     __fromParent = false;
     endResetModel();
     emit areaSizeChanged();
+}
+
+void AreaModel::resetAreaSize() {
+    setAreaSize(QSize(SIZE_DEFAULT, SIZE_DEFAULT));
 }
 
 int AreaModel::areaRowsSize() const {
@@ -152,6 +156,10 @@ void AreaModel::setAreaRowsSize(int rowsSize) {
     }
 }
 
+void AreaModel::resetAreaRowsSize() {
+    setAreaRowsSize(SIZE_DEFAULT);
+}
+
 int AreaModel::areaColumnsSize() const {
     return _areaSize.width();
 }
@@ -167,6 +175,10 @@ void AreaModel::setAreaColumnsSize(int columnsSize) {
         endResetModel();
         emit areaColumnsSizeChanged();
     }
+}
+
+void AreaModel::resetAreaColumnsSize() {
+    setAreaColumnsSize(SIZE_DEFAULT);
 }
 
 int AreaModel::splitOrientation() const {
@@ -260,6 +272,9 @@ QModelIndex AreaModel::indexMapToSource(const QModelIndex &indexArea) const {
 int AreaModel::rowCount(const QModelIndex &parent) const {
     int r;
     auto sourceIndex = indexMapToSource(parent);
+    if (areaRowsSize() == SIZE_DEFAULT) {
+        return _sourceModel->rowCount(sourceIndex);
+    }
     if (firstRow() + areaRowsSize() > _sourceModel->rowCount(sourceIndex)) {
         r = _sourceModel->rowCount(sourceIndex) - firstRow();
     } else {
@@ -271,6 +286,9 @@ int AreaModel::rowCount(const QModelIndex &parent) const {
 int AreaModel::columnCount(const QModelIndex &parent) const {
     int r;
     auto sourceIndex = indexMapToSource(parent);
+    if (areaColumnsSize() == SIZE_DEFAULT) {
+        return _sourceModel->columnCount(sourceIndex);
+    }
     if (firstColumn() + areaColumnsSize() > _sourceModel->columnCount(sourceIndex)) {
         r = _sourceModel->columnCount(sourceIndex) - firstColumn();
     } else {
@@ -313,6 +331,22 @@ bool AreaModel::setHeaderData(int section, Qt::Orientation orientation, const QV
         qDebug() << __PRETTY_FUNCTION__ << "orientation is bad:" << orientation;
         return false;
     }
+}
+
+void AreaModel::fetchMore(const QModelIndex &parent) {
+//    qDebug() << __PRETTY_FUNCTION__ << parent;
+//    const int INSERT_ROWS_COUNT = 2;
+//    beginInsertRows(QModelIndex(), rowCount(), rowCount() + INSERT_ROWS_COUNT);
+//    setAreaRowsSize(areaRowsSize() + INSERT_ROWS_COUNT);
+//    endInsertRows();
+    return _sourceModel->fetchMore(indexMapToSource(parent));
+}
+
+bool AreaModel::canFetchMore(const QModelIndex &parent) const {
+//    qDebug() << __PRETTY_FUNCTION__ << parent << _sourceModel->rowCount()
+//             << firstRow() << rowCount();
+//    return _sourceModel->rowCount() > firstRow() + rowCount();
+    return _sourceModel->canFetchMore(indexMapToSource(parent));
 }
 
 QMap<int, QVariant> AreaModel::itemData(const QModelIndex &index) const {
@@ -369,14 +403,6 @@ bool AreaModel::moveRows(const QModelIndex &sourceParent, int sourceRow, int cou
 
 bool AreaModel::moveColumns(const QModelIndex &sourceParent, int sourceColumn, int count, const QModelIndex &destinationParent, int destinationChild) {
     return _sourceModel->moveColumns(indexMapToSource(sourceParent), sourceColumn, count, indexMapToSource(destinationParent), destinationChild);
-}
-
-void AreaModel::fetchMore(const QModelIndex &parent) {
-    return _sourceModel->fetchMore(indexMapToSource(parent));
-}
-
-bool AreaModel::canFetchMore(const QModelIndex &parent) const {
-    return _sourceModel->canFetchMore(indexMapToSource(parent));
 }
 
 Qt::ItemFlags AreaModel::flags(const QModelIndex &index) const {
